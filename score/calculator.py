@@ -1,5 +1,3 @@
-from dataclasses import dataclass
-
 class ScoreCalculator:
     def __init__(self):
         self.UPPER_CATEGORIES = {

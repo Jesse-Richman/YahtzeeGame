@@ -1,5 +1,5 @@
-from YahtzeeGame import ScoreCalculator
-from YahtzeeGame import ScoreData
+from .calculator import ScoreCalculator
+from .calculator import ScoreData
 
 class ScoreCard:
     def __init__(self):

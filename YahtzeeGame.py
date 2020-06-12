@@ -1,7 +1,8 @@
 import random
-from YahtzeeGame import ScoreCard
+# from YahtzeeGame.Score.Calculator import ScoreCalculator
+from score.card import ScoreCard
 
-class DiceGame:
+class YahtzeeGame:
     """
     A game where each player rolls dice a max number of times in a turn 
     and can choose what dice to keep or throw. The player determines their score 
@@ -166,11 +167,3 @@ exit:       Exits the game
             input("Press Enter to quit...")
         except Exception as e:
             print(e)
-
-# Driver code
-if __name__ == "__main__":
-    try:
-        game = DiceGame()
-        game.start()
-    except Exception as e:
-        print(e)
