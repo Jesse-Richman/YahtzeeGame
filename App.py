@@ -1,4 +1,4 @@
-from YahtzeeGame import YahtzeeGame
+from game import YahtzeeGame
 
 # Driver code
 if __name__ == "__main__":

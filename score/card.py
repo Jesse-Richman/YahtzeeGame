@@ -6,6 +6,7 @@ class ScoreCard:
         # self.name = "Players name"
         # user class for name and scorecard
         # self.subTotal = 0
+        self.bonusValue = 0
         self.upperTotal = 0
         self.lowerTotal = 0
         self.BONUS_VALUE = 35
@@ -23,6 +24,7 @@ class ScoreCard:
         isMultiYahtzee = False
         if self.scoreCalc.testForYahtzee(diceList) and self.scoredCategories.get("yahtzee") != None:
             self.yahtzeeBonus += 100
+            self.lowerTotal += 100 # TODO keep running total or calculate on an as needed basis
             catName = self.numberToUpperCat(diceList[0])
             if self.scoredCategories.get(catName) == None and catName != category:
                 print("You need to specify " + catName)
@@ -38,6 +40,8 @@ class ScoreCard:
             self.upperTotal += s
 
             if not self.hasBonus and self.upperTotal >= 63:
+                self.bonusValue = 35
+                self.upperTotal += self.bonusValue
                 self.hasBonus = True
 
             isRecorded = True
@@ -45,9 +49,9 @@ class ScoreCard:
             # create data object to pass into the score calculator.
             data = ScoreData(diceList, isMultiYahtzee)
             s = self.scoreCalc.LOWER_CATEGORIES[category](data)
+            self.lowerTotal += s
             self._assignScore(category, s)
 
-            # TODO calculate bonus for the lower section. It's far out man
             # if yahtzee catagory is 50 and now they rolled yahtzee again
             #   add bonus of 100 points
             #   if the catagory in the upper section for number on the dice, is unused then player must use that catagory, 
@@ -66,21 +70,18 @@ class ScoreCard:
         print("Score recorded: \n{}".format(self.scoredCategories))
 
 
-    def getTopTotalScore(self) -> int:
+    def getUpperSubTotalScore(self) -> int:
         values = self.scoredCategories.values()
         total = 0
         for i in range(0, 6):
             total += values[i]
-        return 0
+        return total
 
-    def getTotalScore(self) -> int:
+    def getLowerTotalScore(self) -> int:
+        values = self.scoredCategories.values()
         total = 0
-        for v in self.scoredCategories.values():
-            total += v
-
-        # TODO make sure all scores are calculated (yahtzee bonus)
-        if self.hasBonus:
-            total += self.BONUS_VALUE
+        for i in range(0, 6):
+            total += values[i]
         return total
 
     def numberToUpperCat(self, num: int) -> str:
@@ -97,7 +98,6 @@ class ScoreCard:
         else:
             return "sixes"
 
-    # TODO create method to print score card (make it look nice)
     def printScoreCard(self):
         print("""
 Upper Section:
@@ -107,9 +107,8 @@ Threes                      {}
 Fours                       {}
 Fives                       {}
 Sixes                       {}
-Total                       {}
-Bonus                       {}
-Total                       {}
+Bonus (score >= 63)         {}
+Upper Total                 {}
 
 Lower Section
 3 of a kind                 {}
@@ -119,8 +118,8 @@ Sm. Straight                {}
 Lg. Straight                {}
 YAHTZEE                     {}
 Chance                      {}
-Total (of lower section)    {}
-Total (of upper section)    {}
+YAHTZEE Bonus               {}
+Lower Total                 {}
 Grand Total                 {}
             """.format(self.scoredCategories['aces'],
             self.scoredCategories['twos'],
@@ -128,8 +127,7 @@ Grand Total                 {}
             self.scoredCategories['fours'],
             self.scoredCategories['fives'],
             self.scoredCategories['sixes'],
-            self.upperTotal,
-            self.hasBonus,
+            self.bonusValue, #TODO put bonus value in here, either 0 or 35 depending on hasBonus
             self.upperTotal,
             self.scoredCategories['3 of a kind'],
             self.scoredCategories['4 of a kind'],
@@ -138,7 +136,7 @@ Grand Total                 {}
             self.scoredCategories['large straight'],
             self.scoredCategories['yahtzee'],
             self.scoredCategories['chance'],
-            self.upperTotal,
+            self.yahtzeeBonus,
             self.lowerTotal,
-            self.getTotalScore()
+            self.getGrandTotalScore()
             ))

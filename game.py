@@ -84,9 +84,7 @@ class YahtzeeGame:
         print("Your dice list: \n\t{}".format(self.playersDice))
 
     def endTurn(self):
-        """
-        Ends the player's turn by calculating score and reseting variables.
-        """
+        """Ends the player's turn by calculating score and reseting variables."""
         print("Your turn has ended")
         self.showDiceLists()
         self.endOfTurn = True
