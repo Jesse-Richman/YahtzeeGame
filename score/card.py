@@ -15,7 +15,7 @@ class ScoreCard:
         self.scoreCalc = ScoreCalculator()
         self.scoredCategories = {}
     
-    def recordScore(self, category: str, diceList: list) -> bool:
+    def recordScore(self, category: str, diceList: list):
         """
         Returns true if value was set, else returns false indicating 
         that the value has already been set.
@@ -65,26 +65,26 @@ class ScoreCard:
         
         return isRecorded
     
-    def _assignScore(self, category: str, score: int) -> None:
+    def _assignScore(self, category: str, score: int):
         self.scoredCategories[category] = score
         print("Score recorded: \n{}".format(self.scoredCategories))
 
 
-    def getUpperSubTotalScore(self) -> int:
+    def getUpperSubTotalScore(self):
         values = self.scoredCategories.values()
         total = 0
         for i in range(0, 6):
             total += values[i]
         return total
 
-    def getLowerTotalScore(self) -> int:
+    def getLowerTotalScore(self):
         values = self.scoredCategories.values()
         total = 0
         for i in range(0, 6):
             total += values[i]
         return total
 
-    def numberToUpperCat(self, num: int) -> str:
+    def numberToUpperCat(self, num: int):
         if num == 1:
             return "aces"
         elif num == 2:
@@ -98,45 +98,56 @@ class ScoreCard:
         else:
             return "sixes"
 
+    # TODO create a method to get catagory values. 
+    # Method will return a string with value or just an empty string
+
+    def getCatagoryValue(self, catagoryStr):
+        if catagoryStr in self.scoredCategories:
+            return self.scoredCategories[catagoryStr]
+        
+        return ""
+
     def printScoreCard(self):
         print("""
-Upper Section:
-Aces                        {}
-Twos                        {}
-Threes                      {}
-Fours                       {}
-Fives                       {}
-Sixes                       {}
-Bonus (score >= 63)         {}
-Upper Total                 {}
-
-Lower Section
-3 of a kind                 {}
-4 of a kind                 {}
-Full house                  {}
-Sm. Straight                {}
-Lg. Straight                {}
-YAHTZEE                     {}
-Chance                      {}
-YAHTZEE Bonus               {}
-Lower Total                 {}
-Grand Total                 {}
-            """.format(self.scoredCategories['aces'],
-            self.scoredCategories['twos'],
-            self.scoredCategories['threes'],
-            self.scoredCategories['fours'],
-            self.scoredCategories['fives'],
-            self.scoredCategories['sixes'],
-            self.bonusValue, #TODO put bonus value in here, either 0 or 35 depending on hasBonus
++=========== Score Sheet ===========+
+|   Upper Section:                  |
+|   Aces                        {}  |
+|   Twos                        {}  |
+|   Threes                      {}  |
+|   Fours                       {}  |
+|   Fives                       {}  |
+|   Sixes                       {}  |
+|   Bonus (score >= 63)         {}  |
+|   Upper Total                 {}  |
+|                                   |
+|   Lower Section                   |
+|   3 of a kind                 {}  |
+|   4 of a kind                 {}  |
+|   Full house                  {}  |
+|   Sm. Straight                {}  |
+|   Lg. Straight                {}  |
+|   YAHTZEE                     {}  |
+|   Chance                      {}  |
+|   YAHTZEE Bonus               {}  |
+|   Lower Total                 {}  |
+|   Grand Total                 {}  |
++===================================+
+""".format(self.getCatagoryValue('aces'),
+            self.getCatagoryValue('twos'),
+            self.getCatagoryValue('threes'),
+            self.getCatagoryValue('fours'),
+            self.getCatagoryValue('fives'),
+            self.getCatagoryValue('sixes'),
+            self.bonusValue,
             self.upperTotal,
-            self.scoredCategories['3 of a kind'],
-            self.scoredCategories['4 of a kind'],
-            self.scoredCategories['full house'],
-            self.scoredCategories['small straight'],
-            self.scoredCategories['large straight'],
-            self.scoredCategories['yahtzee'],
-            self.scoredCategories['chance'],
+            self.getCatagoryValue('3 of a kind'),
+            self.getCatagoryValue('4 of a kind'),
+            self.getCatagoryValue('full house'),
+            self.getCatagoryValue('small straight'),
+            self.getCatagoryValue('large straight'),
+            self.getCatagoryValue('yahtzee'),
+            self.getCatagoryValue('chance'),
             self.yahtzeeBonus,
             self.lowerTotal,
-            self.getGrandTotalScore()
+            self.upperTotal + self.lowerTotal
             ))

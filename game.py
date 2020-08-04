@@ -1,5 +1,4 @@
 import random
-# from YahtzeeGame.Score.Calculator import ScoreCalculator
 from score.card import ScoreCard
 
 class YahtzeeGame:
@@ -26,13 +25,13 @@ class YahtzeeGame:
         self.playersDice = []
         self.scoringCard = ScoreCard()
 
-    def rollDiceAndShow(self) -> list:
+    def rollDiceAndShow(self):
         """Rolls the remaining dice and prints the results."""
         rList = random.choices(self.DICE_VALUES, k=self.diceCount)
         print("Rolled dice values: \n\t{}\n".format(rList))
         return rList
 
-    def getValidNumInput(self) -> int:
+    def getValidNumInput(self):
         """Gets input by looping until the player enters a valid number."""
         # loop until player enters a number
         while True:
@@ -43,7 +42,7 @@ class YahtzeeGame:
             else:
                 print("Error. Please enter a valid number.")
 
-    def getYNInput(self) -> str:
+    def getYNInput(self):
         """Gets input by looping until the player enters a 'y' or 'n'."""
         # loop until player enters y or n
         while True:
@@ -54,7 +53,7 @@ class YahtzeeGame:
             else:
                 print("Error. Please enter 'y/Y' or 'n/N'.")
 
-    def keepThrow(self, indexes: list, addToList: list, subFromList: list) -> bool:
+    def keepThrow(self, indexes: list, addToList: list, subFromList: list):
         # go through list and convert strings to integers
         tempList = []
         indexStr = ""
@@ -80,18 +79,18 @@ class YahtzeeGame:
 
     def showDiceLists(self):
         """Prints out the rolled dice list and the player's dice list."""
-        print("Rolled dice list: \n\t{}".format(self.rolledDice))
-        print("Your dice list: \n\t{}".format(self.playersDice))
+        print("Rolled dice: \n\t{}".format(self.rolledDice))
+        print("Saved dice: \n\t{}".format(self.playersDice))
 
     def endTurn(self):
         """Ends the player's turn by calculating score and reseting variables."""
         print("Your turn has ended")
-        self.showDiceLists()
+        # self.showDiceLists()
         self.endOfTurn = True
 
         
 
-    def printHelp(self) -> None:
+    def printHelp(self):
         print(
     """
 roll:       Rolls the remaining dice
@@ -123,6 +122,7 @@ exit:       Exits the game
                 self.inputStr = input(">> ").strip()
 
                 # parse entered command
+                #TODO change startswith to equals for the roll command
                 if self.inputStr.startswith("roll"):
                     if (self.rollCounter >= self.MAX_ROLLS):
                         print("You have run out of rolls for this turn. Please record your score.")
@@ -145,7 +145,8 @@ exit:       Exits the game
                     self.showDiceLists()
                 elif self.inputStr.startswith("record"):
                     recordCat = self.inputStr[6:].strip().lower()
-                    if self.scoringCard.recordScore(recordCat, self.playersDice):
+                    allDice = self.playersDice + self.rolledDice
+                    if self.scoringCard.recordScore(recordCat, allDice):
                         # Reset variables
                         self.rollCounter = 0
                         self.diceCount = self.MAX_DICE_COUNT
@@ -164,4 +165,5 @@ exit:       Exits the game
             # After exiting the game loop
             input("Press Enter to quit...")
         except Exception as e:
+            # TODO print out why the app crashes
             print(e)
