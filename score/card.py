@@ -3,9 +3,7 @@ from .calculator import ScoreData
 
 class ScoreCard:
     def __init__(self):
-        # self.name = "Players name"
         # user class for name and scorecard
-        # self.subTotal = 0
         self.bonusValue = 0
         self.upperTotal = 0
         self.lowerTotal = 0
@@ -24,7 +22,7 @@ class ScoreCard:
         isMultiYahtzee = False
         if self.scoreCalc.testForYahtzee(diceList) and self.scoredCategories.get("yahtzee") != None:
             self.yahtzeeBonus += 100
-            self.lowerTotal += 100 # TODO keep running total or calculate on an as needed basis
+            self.lowerTotal += 100
             catName = self.numberToUpperCat(diceList[0])
             if self.scoredCategories.get(catName) == None and catName != category:
                 print("You need to specify " + catName)
@@ -98,39 +96,33 @@ class ScoreCard:
         else:
             return "sixes"
 
-    # TODO create a method to get catagory values. 
-    # Method will return a string with value or just an empty string
-
     def getCatagoryValue(self, catagoryStr):
-        if catagoryStr in self.scoredCategories:
-            return self.scoredCategories[catagoryStr]
-        
-        return ""
+        return self.scoredCategories[catagoryStr] if catagoryStr in self.scoredCategories else ""
 
     def printScoreCard(self):
         print("""
 +=========== Score Sheet ===========+
-|   Upper Section:                  |
-|   Aces                        {}  |
-|   Twos                        {}  |
-|   Threes                      {}  |
-|   Fours                       {}  |
-|   Fives                       {}  |
-|   Sixes                       {}  |
-|   Bonus (score >= 63)         {}  |
-|   Upper Total                 {}  |
-|                                   |
-|   Lower Section                   |
-|   3 of a kind                 {}  |
-|   4 of a kind                 {}  |
-|   Full house                  {}  |
-|   Sm. Straight                {}  |
-|   Lg. Straight                {}  |
-|   YAHTZEE                     {}  |
-|   Chance                      {}  |
-|   YAHTZEE Bonus               {}  |
-|   Lower Total                 {}  |
-|   Grand Total                 {}  |
+   Upper Section:                  
+   Aces                        {}  
+   Twos                        {}  
+   Threes                      {}  
+   Fours                       {}  
+   Fives                       {}  
+   Sixes                       {}  
+   Bonus (score >= 63)         {}  
+   Upper Total                 {}  
+                                   
+   Lower Section                   
+   3 of a kind                 {}  
+   4 of a kind                 {}  
+   Full house                  {}  
+   Sm. Straight                {}  
+   Lg. Straight                {}  
+   YAHTZEE                     {}  
+   Chance                      {}  
+   YAHTZEE Bonus               {}  
+   Lower Total                 {}  
+   Grand Total                 {}  
 +===================================+
 """.format(self.getCatagoryValue('aces'),
             self.getCatagoryValue('twos'),
