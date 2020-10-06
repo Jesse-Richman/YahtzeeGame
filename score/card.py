@@ -25,13 +25,13 @@ class ScoreCard:
             self.lowerTotal += 100
             catName = self.numberToUpperCat(diceList[0])
             if self.scoredCategories.get(catName) == None and catName != category:
-                print("You need to specify " + catName)
+                # print("You need to specify " + catName)
                 return False
             else:
                 isMultiYahtzee = True
 
         if self.scoredCategories.get(category) != None:
-            print("Score already recorded")
+            return False
         elif category in self.scoreCalc.UPPER_CATEGORIES:
             s = self.scoreCalc.UPPER_CATEGORIES[category](diceList)
             self._assignScore(category, s)
@@ -59,13 +59,14 @@ class ScoreCard:
 
             isRecorded = True
         else:
-            print("Score category does not exist")
+            # print("Score category does not exist")
+            return False
         
         return isRecorded
     
     def _assignScore(self, category: str, score: int):
         self.scoredCategories[category] = score
-        print("Score recorded: \n{}".format(self.scoredCategories))
+        # print("Score recorded: \n{}".format(self.scoredCategories))
 
 
     def getUpperSubTotalScore(self):
@@ -99,8 +100,12 @@ class ScoreCard:
     def getCatagoryValue(self, catagoryStr):
         return self.scoredCategories[catagoryStr] if catagoryStr in self.scoredCategories else ""
 
-    def printScoreCard(self):
-        print("""
+    def isComplete(self):
+        return len(self.scoredCategories) == 13
+
+
+    def getScoresheetText(self):
+        return """
 +=========== Score Sheet ===========+
    Upper Section:                  
    Aces                        {}  
@@ -142,4 +147,4 @@ class ScoreCard:
             self.yahtzeeBonus,
             self.lowerTotal,
             self.upperTotal + self.lowerTotal
-            ))
+            )

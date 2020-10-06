@@ -1,10 +1,11 @@
 import random
 from score.card import ScoreCard
+from player import Player
 
 class YahtzeeGame:
     """
-    A game where each player rolls dice a max number of times in a turn 
-    and can choose what dice to keep or throw. The player determines their score 
+    A game where each player rolls dice a max number of times in a turn and 
+    can choose what dice to keep or throw. The player determines their score 
     after ending their turn. When the game ends, the player with the 
     highest score wins.
     """
@@ -16,76 +17,105 @@ class YahtzeeGame:
         self.MAX_ROLLS = 3
         self.DICE_VALUES = [1, 2, 3, 4, 5, 6]
         self.MAX_DICE_COUNT = 5
+
         # Declare variables
-        self.inputStr = ""
+        self.isGameOver = False
         self.rolledDice = []
         self.rollCounter = 0
         self.endOfTurn = False
         self.diceCount = self.MAX_DICE_COUNT
         self.playersDice = []
-        self.scoringCard = ScoreCard()
+        # self.scoringCard = ScoreCard()
+        # player list is a queue
+        self.players = []
+        self.curPlayerIndex = 0
 
-    def rollDiceAndShow(self):
-        """Rolls the remaining dice and prints the results."""
-        rList = random.choices(self.DICE_VALUES, k=self.diceCount)
-        print("Rolled dice values: \n\t{}\n".format(rList))
-        return rList
+    def roll_dice(self):
+        if self.rollCounter < self.MAX_ROLLS:
+            diceCount = len(self.rolledDice) if len(self.playersDice) != 0 else self.MAX_DICE_COUNT
+            self.rolledDice = random.choices(self.DICE_VALUES, k=diceCount)
+            self.rollCounter += 1
+            return True
+        return False
 
-    def getValidNumInput(self):
-        """Gets input by looping until the player enters a valid number."""
-        # loop until player enters a number
-        while True:
-            self.inputStr = input("Enter the dice value you want to keep: ")
+    def keepDiceValues(self, values):
+        """Transfers dice from the rolled dice to the player's dice"""
+        self.keepThrow(values, self.playersDice, self.rolledDice)
 
-            if self.inputStr.isnumeric():
-                return int(self.inputStr)
-            else:
-                print("Error. Please enter a valid number.")
+    def throwDiceValues(self, values):
+        """Transfers dice from the player's dice to the rolled dice"""
+        self.keepThrow(values, self.rolledDice, self.playersDice)
 
-    def getYNInput(self):
-        """Gets input by looping until the player enters a 'y' or 'n'."""
-        # loop until player enters y or n
-        while True:
-            self.inputStr = input("Do you want to throw your dice back (y/n)?: ").lower()
-
-            if self.inputStr == "y" or self.inputStr == "n":
-                return self.inputStr
-            else:
-                print("Error. Please enter 'y/Y' or 'n/N'.")
-
-    def keepThrow(self, values: list, addToList: list, subFromList: list):
-        # go through list and convert strings to integers
-
+    def keepThrow(self, values, addToList, subFromList):
+        # values should be a list of integers
         for v in values:
-            valStr = v.strip()
-            if not valStr.isnumeric():
-                print("Not a valid input of '{}'.".format(v))
-                return False
-            
-            value = int(valStr)
             # check if the value is in the subFromList
-            if value in subFromList:
-                subFromList.remove(value)
-                addToList.append(value)
-            
+            if v in subFromList:
+                subFromList.remove(v)
+                addToList.append(v)
+    
+    def recordScore(self, catagory):
+        """Attempts to records the player's score in the given catagory and 
+        returns whether or not the score was recorded. This also 
+        effectivly ends the player's turn."""
+        allDice = self.playersDice + self.rolledDice
+        # TODO if the score that's about to be recorded is zero, ask the user
+        # if they still want to proceed
+        isRecorded = self.scoringCard.recordScore(catagory, allDice)
+        if isRecorded:
+            # Reset variables
+            self.rollCounter = 0
+            self.diceCount = self.MAX_DICE_COUNT
+            self.playersDice.clear()
+        return isRecorded
+
+    # def get_scoresheet(self):
+    #     return self.scoringCard.get_scoresheet_text()
+
+    
+    # def checkForWin(self):
+    #     # go through each player and check if the player's score card is complete
+    #     return self.scoringCard.isComplete()
+
+    def addPlayer(self, name):
+        # check if the player name is already in the list
+        for p in self.players:
+            if p.name == name:
+                return False
+        # add player to list
+        self.players.append(Player(name))
         return True
+    
+    def removePlayer(self, name):
+        # check if the player name is in the list
+        foundPlayer = None
+        for p in self.players:
+            if p.name == name:
+                foundPlayer = p
+                break
+        # remove the player from the list
+        if foundPlayer:
+            self.players.remove(foundPlayer)
+            return True
+        return False
 
-    def showDiceLists(self):
-        """Prints out the rolled dice list and the player's dice list."""
-        print("Rolled dice: \n\t{}".format(self.rolledDice))
-        print("Saved dice: \n\t{}".format(self.playersDice))
+    def nextPlayer(self):
+        self.curPlayerIndex += 1
+        if self.curPlayerIndex >= len(self.players):
+            self.curPlayerIndex = 0
+        # Reset variables
+        self.rollCounter = 0
+        self.diceCount = self.MAX_DICE_COUNT
+        self.playersDice.clear()
 
-    def endTurn(self):
-        """Ends the player's turn by calculating score and reseting variables."""
-        print("Your turn has ended")
-        # self.showDiceLists()
-        self.endOfTurn = True
-
+        if self.currentPlayer().isComplete():
+            self.isGameOver = True
         
+    def currentPlayer(self):
+        return self.players[self.curPlayerIndex]
 
-    def printHelp(self):
-        print(
-    """
+    def get_help(self):
+        return """
 roll:       Rolls the remaining dice
 
 keep:       Keep the specificed dice based on the dices value
@@ -100,62 +130,4 @@ scores:     Shows you all the scores you have recorded.
 
 help:       Shows commands and discriptions
 
-exit:       Exits the game
-    """
-        )
-
-    def start(self):
-        """Starts the dice game."""
-        try:
-            # Main loop
-            # TODO we need a way to tell when the game is ended. All scores have been recorded?
-            while self.inputStr != "exit":
-                # get player input
-                self.inputStr = input(">> ").strip()
-
-                # parse entered command
-                if self.inputStr == "roll":
-                    if (self.rollCounter >= self.MAX_ROLLS):
-                        print("You have run out of rolls for this turn. Please record your score.")
-                    else:
-                        self.rolledDice = self.rollDiceAndShow()
-                        self.rollCounter += 1
-                elif self.inputStr.startswith("keep"):
-                    # get substring after command and split into list
-                    keepValues = self.inputStr[4:].strip().split(",")
-                    if self.keepThrow(keepValues, self.playersDice, self.rolledDice):
-                        self.diceCount -= len(keepValues)
-                    self.showDiceLists()
-
-                elif self.inputStr.startswith("throw"):
-                    # get substring after command and split into list
-                    keepValues = self.inputStr[5:].strip().split(",")
-                    if self.keepThrow(keepValues, self.rolledDice, self.playersDice):
-                        self.diceCount += len(keepValues)
-                    self.showDiceLists()
-                elif self.inputStr.startswith("record"):
-                    recordCat = self.inputStr[6:].strip().lower()
-                    allDice = self.playersDice + self.rolledDice
-                    # TODO if the score that's about to be recorded is zero, ask the user
-                    # if they still want to proceed
-                    if self.scoringCard.recordScore(recordCat, allDice):
-                        # Reset variables
-                        self.rollCounter = 0
-                        self.diceCount = self.MAX_DICE_COUNT
-                        self.playersDice.clear()
-                        self.endTurn()
-                elif self.inputStr == "scores":
-                    self.scoringCard.printScoreCard()
-                # handle help command
-                elif self.inputStr == "help":
-                    self.printHelp()
-                elif self.inputStr == "exit":
-                    continue
-                else:
-                    print("Unknown command")
-            
-            # After exiting the game loop
-            input("Press Enter to quit...")
-        except Exception as e:
-            # TODO print out why the app crashes
-            print(e)
+exit:       Exits the game"""

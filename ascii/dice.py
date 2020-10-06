@@ -25,3 +25,7 @@ class AsciiDice:
         for i in range(1, 1 + listSize):
             headerStr += "    {}    ".format(i)
         print(headerStr)
+
+if __name__ == "__main__":
+    dice = AsciiDice(open("ascii/AsciiDice.txt"))
+    dice.printDiceList([1,2,3,4,6,6])
