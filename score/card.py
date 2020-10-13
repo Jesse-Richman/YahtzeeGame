@@ -103,8 +103,11 @@ class ScoreCard:
     def isComplete(self):
         return len(self.scoredCategories) == 13
 
+    def getTotalScore(self):
+        return self.upperTotal + self.lowerTotal
 
     def getScoresheetText(self):
+        # TODO show the player's name
         return """
 +=========== Score Sheet ===========+
    Upper Section:                  
@@ -146,5 +149,5 @@ class ScoreCard:
             self.getCatagoryValue('chance'),
             self.yahtzeeBonus,
             self.lowerTotal,
-            self.upperTotal + self.lowerTotal
+            self.getTotalScore()
             )

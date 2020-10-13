@@ -9,7 +9,6 @@ class YahtzeeGame:
     after ending their turn. When the game ends, the player with the 
     highest score wins.
     """
-# what defines the end of a game?
 
     # Constructor
     def __init__(self):
@@ -25,8 +24,6 @@ class YahtzeeGame:
         self.endOfTurn = False
         self.diceCount = self.MAX_DICE_COUNT
         self.playersDice = []
-        # self.scoringCard = ScoreCard()
-        # player list is a queue
         self.players = []
         self.curPlayerIndex = 0
 
@@ -61,12 +58,7 @@ class YahtzeeGame:
         allDice = self.playersDice + self.rolledDice
         # TODO if the score that's about to be recorded is zero, ask the user
         # if they still want to proceed
-        isRecorded = self.scoringCard.recordScore(catagory, allDice)
-        if isRecorded:
-            # Reset variables
-            self.rollCounter = 0
-            self.diceCount = self.MAX_DICE_COUNT
-            self.playersDice.clear()
+        isRecorded = self.currentPlayer().recordScore(catagory, allDice)
         return isRecorded
 
     # def get_scoresheet(self):
@@ -113,6 +105,16 @@ class YahtzeeGame:
         
     def currentPlayer(self):
         return self.players[self.curPlayerIndex]
+
+    def getRankings(self):
+        listCopy = list(self.players)
+        listCopy.sort(key=lambda p: p.scoreCard.getTotalScore())
+
+        rStr = ""
+        for i in range(len(listCopy)):
+            cur = listCopy[i]
+            rStr += f'{i+1}\t{cur.name}\t{cur.scoreCard.getTotalScore()}\n'
+        return rStr
 
     def get_help(self):
         return """

@@ -9,7 +9,7 @@ class Player:
     def recordScore(self, category, diceList):
         return self.scoreCard.recordScore(category, diceList)
 
-    def getScoresheetText(self):
+    def getScoresheet(self):
         return self.scoreCard.getScoresheetText()
 
     def isComplete(self):

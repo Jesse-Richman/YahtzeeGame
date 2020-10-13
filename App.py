@@ -23,13 +23,7 @@ def playerInputLoop():
     inputStr = ""
     while inputStr != "rage quit" and not game.isGameOver:
         # get player input
-        inputStr = input(">> ").strip()
-
-        # TODO: disscuss how we are going to handle switching of the players. 
-        # How do we go from one player to the next?
-        #   call game.nextPlayer()
-        # when do you advance to the next player?
-        #   when the player enters the command "end turn"
+        inputStr = input(game.currentPlayer().name + ">> ").strip()
 
         # parse entered command
         if inputStr == "roll":
@@ -56,15 +50,15 @@ def playerInputLoop():
             recordCat = inputStr[6:].strip().lower()
             if game.recordScore(recordCat):
                 print("Score was recorded")
-                print("Your turn has ended")
             else:
                 print("You cannot score in " + recordCat)
         
         elif inputStr == "scores":
-            print(game.getScoresheet())
+            print(game.currentPlayer().getScoresheet())
 
         elif inputStr == "end turn":
             game.nextPlayer()
+            # TODO print out the player's score card
         
         # handle help command
         elif inputStr == "help":
@@ -76,8 +70,8 @@ def playerInputLoop():
         else:
             print("Unknown command")
         # END LOOP
-
         # TODO show player rankings
+        game.getRankings()
 
 def printMainMenu():
     # Print menu
@@ -93,12 +87,13 @@ def printMainMenu():
     """)
 
 def printCredits():
-    print("""
+    print("""Credits
     Lead Programmer         Jesse Richman
     Game Designer           Jesse Richman
     Lead Story Writer       Jesse Richman
     Game Tester             Jesse Richman
 
+    Executive Producer      Lorin Long
     Lead Googler            Lorin Long
     """)
 
@@ -119,6 +114,7 @@ if __name__ == "__main__":
                 if len(game.players) == 0:
                     print("No players. Cannot start the game.")
                 else:
+                    # indicate that the game has started (and maybe how many players there are)
                     playerInputLoop()
     
             elif inputStr.startswith("add"):
@@ -150,11 +146,14 @@ if __name__ == "__main__":
             elif inputStr =="last scores":
                 print("not implemented")
 
+            elif inputStr == "clear":
+                print("not implemented")
+
             elif inputStr == "help":
                 printMainMenu()
 
             elif inputStr == "exit":
-                exit()
+                pass
 
             else:
                 print("Unknown command")
