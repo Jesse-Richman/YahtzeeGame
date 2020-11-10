@@ -21,8 +21,13 @@ class ScoreCard:
         isRecorded = False
         isMultiYahtzee = False
         if self.scoreCalc.testForYahtzee(diceList) and self.scoredCategories.get("yahtzee") != None:
+            # TODO the bonus is always applied, regardless of if the score is actually recorded.
+            # this means they player could get several hundred points by "incorrectly" recording
+            # a score just to get the bonus
+            # just move this belowe the following block of code
             self.yahtzeeBonus += 100
             self.lowerTotal += 100
+
             catName = self.numberToUpperCat(diceList[0])
             if self.scoredCategories.get(catName) == None and catName != category:
                 # print("You need to specify " + catName)
@@ -106,10 +111,10 @@ class ScoreCard:
     def getTotalScore(self):
         return self.upperTotal + self.lowerTotal
 
-    def getScoresheetText(self):
+    def getScoresheetText(self, playerName):
         # TODO show the player's name
         return """
-+=========== Score Sheet ===========+
++=========== {}'s Score Sheet ===========+
    Upper Section:                  
    Aces                        {}  
    Twos                        {}  
@@ -132,7 +137,8 @@ class ScoreCard:
    Lower Total                 {}  
    Grand Total                 {}  
 +===================================+
-""".format(self.getCatagoryValue('aces'),
+""".format(playerName,
+            self.getCatagoryValue('aces'),
             self.getCatagoryValue('twos'),
             self.getCatagoryValue('threes'),
             self.getCatagoryValue('fours'),

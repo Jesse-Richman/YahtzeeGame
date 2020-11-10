@@ -1,4 +1,4 @@
-import random
+import random, datetime
 from score.card import ScoreCard
 from player import Player
 
@@ -26,10 +26,12 @@ class YahtzeeGame:
         self.playersDice = []
         self.players = []
         self.curPlayerIndex = 0
+        self.hasRecordedScore = False
 
-    def roll_dice(self):
+    def rollDice(self):
         if self.rollCounter < self.MAX_ROLLS:
             diceCount = len(self.rolledDice) if len(self.playersDice) != 0 else self.MAX_DICE_COUNT
+            random.seed(datetime.datetime.now()) # more randomness?
             self.rolledDice = random.choices(self.DICE_VALUES, k=diceCount)
             self.rollCounter += 1
             return True
@@ -55,20 +57,19 @@ class YahtzeeGame:
         """Attempts to records the player's score in the given catagory and 
         returns whether or not the score was recorded. This also 
         effectivly ends the player's turn."""
+
+        # Ensure that the player cannot record their score multiple times
+        if self.hasRecordedScore:
+            print("You have already recored your score for this turn.")
+            return False
+
         allDice = self.playersDice + self.rolledDice
         # TODO if the score that's about to be recorded is zero, ask the user
         # if they still want to proceed
-        isRecorded = self.currentPlayer().recordScore(catagory, allDice)
-        return isRecorded
-
-    # def get_scoresheet(self):
-    #     return self.scoringCard.get_scoresheet_text()
-
+        
+        self.hasRecordedScore = self.currentPlayer().recordScore(catagory, allDice)
+        return self.hasRecordedScore
     
-    # def checkForWin(self):
-    #     # go through each player and check if the player's score card is complete
-    #     return self.scoringCard.isComplete()
-
     def addPlayer(self, name):
         # check if the player name is already in the list
         for p in self.players:
@@ -91,6 +92,9 @@ class YahtzeeGame:
             return True
         return False
 
+    def removeAllPlayers(self):
+        self.players.clear()
+
     def nextPlayer(self):
         self.curPlayerIndex += 1
         if self.curPlayerIndex >= len(self.players):
@@ -98,6 +102,7 @@ class YahtzeeGame:
         # Reset variables
         self.rollCounter = 0
         self.diceCount = self.MAX_DICE_COUNT
+        self.hasRecordedScore = False
         self.playersDice.clear()
 
         if self.currentPlayer().isComplete():
@@ -108,7 +113,7 @@ class YahtzeeGame:
 
     def getRankings(self):
         listCopy = list(self.players)
-        listCopy.sort(key=lambda p: p.scoreCard.getTotalScore())
+        listCopy.sort(key=lambda p: p.scoreCard.getTotalScore(), reverse=True)
 
         rStr = ""
         for i in range(len(listCopy)):
@@ -116,7 +121,14 @@ class YahtzeeGame:
             rStr += f'{i+1}\t{cur.name}\t{cur.scoreCard.getTotalScore()}\n'
         return rStr
 
-    def get_help(self):
+    def giveDice(self, values):
+        # prevent further rolls after a give command
+        self.diceCount = 0
+        self.rollCounter = self.MAX_ROLLS
+        self.rolledDice.clear()
+        self.playersDice = values
+
+    def getHelp(self):
         return """
 roll:       Rolls the remaining dice
 

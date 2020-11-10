@@ -10,7 +10,7 @@ class Player:
         return self.scoreCard.recordScore(category, diceList)
 
     def getScoresheet(self):
-        return self.scoreCard.getScoresheetText()
+        return self.scoreCard.getScoresheetText(self.name)
 
     def isComplete(self):
         '''Returns whether the player's score card is fully filled out.

@@ -27,7 +27,7 @@ def playerInputLoop():
 
         # parse entered command
         if inputStr == "roll":
-            if game.roll_dice():
+            if game.rollDice():
                 printDiceLists()
             else:
                 print("You have run out of rolls for this turn. Please record your score.")
@@ -56,13 +56,19 @@ def playerInputLoop():
         elif inputStr == "scores":
             print(game.currentPlayer().getScoresheet())
 
+        # TODO (done) add a give command to give yourself whatever dice values you want
+        elif inputStr.startswith("give"):
+            values = inputStr[4:].strip().split(",")
+            game.giveDice(convertListToInts(values))
+
         elif inputStr == "end turn":
             game.nextPlayer()
-            # TODO print out the player's score card
+            # Shows the player's score sheet
+            print(game.currentPlayer().getScoresheet())
         
         # handle help command
         elif inputStr == "help":
-            print(game.get_help())
+            print(game.getHelp())
         
         elif inputStr == "rage quit":
             continue
@@ -70,8 +76,7 @@ def playerInputLoop():
         else:
             print("Unknown command")
         # END LOOP
-        # TODO show player rankings
-        game.getRankings()
+    print(game.getRankings())
 
 def printMainMenu():
     # Print menu
@@ -88,12 +93,19 @@ def printMainMenu():
 
 def printCredits():
     print("""Credits
-    Lead Programmer         Jesse Richman
-    Game Designer           Jesse Richman
-    Lead Story Writer       Jesse Richman
-    Game Tester             Jesse Richman
-
+    Producer                Jesse Richman
     Executive Producer      Lorin Long
+
+    Lead Programmer         Jesse Richman
+    Lead Story Writer       Jesse Richman
+
+    Game Designer           Jesse Richman
+    Game Theory             Lorin Long
+    Game Tester 1           Jesse Richman
+    Game Tester 2           Lorin Long
+    Game Player             Jesse Richman
+
+    Artwork                 Lorin Long
     Lead Googler            Lorin Long
     """)
 
@@ -101,7 +113,6 @@ def printCredits():
 if __name__ == "__main__":
     try:
         # FEATURE maybe allow the order of the players to be changed
-
         inputStr = ""
         printMainMenu()
         game = YahtzeeGame()
@@ -144,10 +155,15 @@ if __name__ == "__main__":
                 print("")
 
             elif inputStr =="last scores":
-                print("not implemented")
+                rankings = game.getRankings()
+                if not rankings:
+                    print("No previous game has been played")
+                else:
+                    print(rankings)
 
             elif inputStr == "clear":
-                print("not implemented")
+                game.removeAllPlayers()
+                print("All players have been removed")
 
             elif inputStr == "help":
                 printMainMenu()
@@ -158,9 +174,6 @@ if __name__ == "__main__":
             else:
                 print("Unknown command")
         # End Main menu loop
-
-        # After exiting the game loop
-        # when the game ends print out the credits (with Lorin as 'Head Googler')
         printCredits()
         input("Press Enter to quit...")
     except Exception as e:
