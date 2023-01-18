@@ -94,19 +94,18 @@ def printMainMenu():
 def printCredits():
     print("""Credits
     Producer                Jesse Richman
-    Executive Producer      Lorin Long
+    Executive Producer      The Helper
 
     Lead Programmer         Jesse Richman
     Lead Story Writer       Jesse Richman
 
     Game Designer           Jesse Richman
-    Game Theory             Lorin Long
-    Game Tester 1           Jesse Richman
-    Game Tester 2           Lorin Long
+    Game Theory             The Helper
+    Game Tester             Jesse Richman
     Game Player             Jesse Richman
 
-    Artwork                 Lorin Long
-    Lead Googler            Lorin Long
+    Artwork                 The Helper 
+    Lead Googler            The Helper 
     """)
 
 # Driver code

@@ -137,10 +137,12 @@ keep:       Keep the specificed dice based on the dices value
 throw:      Throws dice the player has back into the active dice to be rolled
 
 record:     Scores the dice you have based on how to tell it to score. For example,
-            typing 'score aces' will score into the aces catagory. Once a score is 
+            typing 'record aces' will score into the aces catagory. Once a score is 
             recorded for a catagory, you cannot change that score.
 
 scores:     Shows you all the scores you have recorded.
+
+end turn:   Ends your turn
 
 help:       Shows commands and discriptions
 
